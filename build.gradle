@@ -55,6 +55,9 @@ def getVersionName = { ->
       url "https://repository.apache.org/service/local/repositories/releases/content"
     }
     maven {
+      url 'https://dl.bintray.com/hbs/maven'
+    }
+    maven {
       url 'https://dl.bintray.com/cityzendata/maven'
     }
   }
