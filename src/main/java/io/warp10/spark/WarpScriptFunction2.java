@@ -2,7 +2,6 @@ package io.warp10.spark;
 
 import io.warp10.script.WarpScriptException;
 
-import org.apache.spark.api.java.function.Function;
 import org.apache.spark.api.java.function.Function2;
 
 public class WarpScriptFunction2<T1, T2, R> extends WarpScriptAbstractFunction implements Function2<T1, T2, R> {

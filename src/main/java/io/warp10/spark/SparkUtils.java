@@ -52,6 +52,14 @@ public class SparkUtils {
       return o;
     } else if (o instanceof Number) {
       return o;
+    } else if (o instanceof List) {
+      ArrayList<Object> l = new ArrayList<Object>();
+      
+      for (Object elt: (List) o) {
+        l.add(toSpark(elt));
+      }
+      
+      return l;
     } else {
       throw new RuntimeException("Encountered yet unsupported type: " + o.getClass());
     }
