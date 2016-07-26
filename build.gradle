@@ -54,6 +54,9 @@ def getVersionName = { ->
     maven {
       url "https://repository.apache.org/service/local/repositories/releases/content"
     }
+    maven {
+      url 'https://dl.bintray.com/cityzendata/maven'
+    }
   }
 
   //
@@ -69,6 +72,11 @@ def getVersionName = { ->
 
   dependencies {
     //
+    // WarpScript
+    //
+    compile group: 'io.warp10', name: 'warpscript', version: '1.0.9'
+
+    //
     // Apache Spark
     //
     compile group: 'org.apache.spark', name: 'spark-core_2.11', version: '1.6.2'
@@ -81,13 +89,13 @@ def getVersionName = { ->
     user = project.hasProperty('bintrayUser') ? project.property('bintrayUser') : System.getenv('BINTRAY_USER')
     key = project.hasProperty('bintrayApiKey') ? project.property('bintrayApiKey') : System.getenv('BINTRAY_API_KEY')
 
-    publications = [ 'warp10-flink' ]
+    publications = [ 'warp10-spark' ]
 
     pkg {
       repo = 'maven'
       name = 'warp10-flink'
       licenses = ['Apache-2.0']
-      vcsUrl = 'https://github.com/cityzendata/warp10-flink.git'
+      vcsUrl = 'https://github.com/cityzendata/warp10-spark.git'
       version {
         name = getVersionName()
         released  = new Date()
