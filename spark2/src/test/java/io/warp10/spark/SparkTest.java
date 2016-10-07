@@ -3,8 +3,9 @@ package io.warp10.spark;
 import java.util.ArrayList;
 import java.util.List;
 
-import io.warp10.spark.common.WarpScriptFunction;
 import io.warp10.WarpConfig;
+import io.warp10.spark2.WarpScriptFlatMapFunction;
+import io.warp10.spark2.WarpScriptFunction;
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
@@ -47,7 +48,7 @@ public class SparkTest {
 
     JavaRDD<String> lines = sc.parallelize(list, 10);
 
-    lines = lines.keyBy(new WarpScriptFunction<String,String>("0 1 SUBSTRING")).flatMap(new WarpScriptFlatMapFunction<Tuple2<String,String>, String>("SNAPSHOT [ SWAP ]"));
+    lines = lines.keyBy(new WarpScriptFunction<>("0 1 SUBSTRING")).flatMap(new WarpScriptFlatMapFunction<>("SNAPSHOT [ SWAP ]"));
 
     System.out.println(lines.collect());
 

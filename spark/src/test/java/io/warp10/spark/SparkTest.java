@@ -3,7 +3,6 @@ package io.warp10.spark;
 import java.util.ArrayList;
 import java.util.List;
 
-import io.warp10.spark.common.WarpScriptFunction;
 import io.warp10.WarpConfig;
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaRDD;

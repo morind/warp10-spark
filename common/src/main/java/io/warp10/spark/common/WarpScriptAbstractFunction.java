@@ -96,7 +96,7 @@ public abstract class WarpScriptAbstractFunction implements Serializable {
 
   private void writeObject(java.io.ObjectOutputStream out) throws IOException {
     out.writeUTF(this.semantics.toString());
-    out.writeObject(this.executors);
+    out.writeObject(this.executor);
   }
   
   private void readObject(java.io.ObjectInputStream in) throws IOException, ClassNotFoundException {

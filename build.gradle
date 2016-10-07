@@ -125,7 +125,11 @@ subprojects {
     //
     // WarpScript
     //
-    compile group: 'io.warp10', name: 'warpscript', version: '1.0.14-57-g391fd14'
+
+    compile("io.warp10:warpscript:1.0.14-57-g391fd14") {
+      exclude module: 'servlet-api'
+    }
+
   }
 
   //
@@ -251,10 +255,10 @@ def getVersionName(String revision) {
 
   if (!revision.endsWith('SNAPSHOT')) {
     def stdout = new ByteArrayOutputStream()
-    //exec {
-      //commandLine 'git', 'describe', '--tags', '--always'
-      //standardOutput = stdout
-    //}
+    exec {
+      commandLine 'git', 'describe', '--tags', '--always'
+      standardOutput = stdout
+    }
     newRevision = stdout.toString().trim()
   }
   return newRevision
@@ -343,12 +347,19 @@ project(':spark') {
 
   dependencies {
 
+    testCompile group: 'junit', name: 'junit', version: '4.6'
+
     compile group: 'io.warp10', name: 'common', version: sparkVersion['common']
+
+    provided group: 'javax.servlet', name: 'servlet-api', version: '2.5'
 
     //
     // Apache Spark
     //
-    compile group: 'org.apache.spark', name: 'spark-core_2.11', version: '1.6.2'
+    compile("org.apache.spark:spark-core_2.11:1.6.2") {
+      exclude module: 'javax.servlet-api'
+    }
+
   }
 
   jar {
@@ -473,12 +484,19 @@ project(':spark2') {
 
   dependencies {
 
+    testCompile group: 'junit', name: 'junit', version: '4.6'
+
     compile group: 'io.warp10', name: 'common', version: sparkVersion['common']
+
+    provided group: 'javax.servlet', name: 'servlet-api', version: '2.5'
 
     //
     // Apache Spark
     //
-    compile group: 'org.apache.spark', name: 'spark-core_2.11', version: '2.0.1'
+    compile("org.apache.spark:spark-core_2.11:2.0.1") {
+      exclude module: 'javax.servlet-api'
+    }
+
   }
 
   jar {
