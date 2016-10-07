@@ -39,6 +39,8 @@ subprojects {
   apply plugin: 'maven-publish';
   apply plugin: 'com.jfrog.bintray'
 
+  group = 'io.warp10'
+
   //map key = archive base name : value a artifact version
   ext {
     sparkVersion = [:]
@@ -153,6 +155,21 @@ subprojects {
     }
   }
 
+  // DEPLOY ON MAVEN REPO WITH SCP
+  uploadArchives {
+    repositories {
+      repositories.mavenDeployer {
+        configuration = configurations.deployerJars
+        uniqueVersion = false
+
+        repository(url: "scpexe://${stagingURL}") {
+          authentication(userName: "${stagingUser}")
+        }
+      }
+    }
+  }
+
+
   // DEPLOY ON BINTRAY
   bintray {
     user = project.hasProperty('bintrayUser') ? project.property('bintrayUser') : System.getenv('BINTRAY_USER')
@@ -164,7 +181,7 @@ subprojects {
 
     pkg {
       repo = 'maven'
-      name = 'spark'
+      name = 'common'
       licenses = ['Apache-2.0']
       vcsUrl = 'https://github.com/cityzendata/spark.git'
       version {
@@ -389,8 +406,8 @@ project(':spark') {
           exclude { it.toString().contains('jmh') }
           exclude { it.toString().contains('junit') }
           exclude { it.toString().contains('parquet') }
-          exclude { it.toString().contains('hadoop') }
-          exclude { it.toString().contains('spark') }
+          exclude { it.toString().contains('org.apache.hadoop') }
+          exclude { it.toString().contains('org.apache.spark') }
         }
       }
     } {
@@ -447,7 +464,7 @@ project(':spark') {
   //
   // Tasks dependencies
   //
-  pack.dependsOn generateChangelog
+  //pack.dependsOn generateChangelog
   uploadArchives.dependsOn pack
   bintrayUpload.dependsOn pack
 
@@ -526,8 +543,8 @@ project(':spark2') {
           exclude { it.toString().contains('jmh') }
           exclude { it.toString().contains('junit') }
           exclude { it.toString().contains('parquet') }
-          exclude { it.toString().contains('hadoop') }
-          exclude { it.toString().contains('spark') }
+          exclude { it.toString().contains('org.apache.hadoop') }
+          exclude { it.toString().contains('org.apache.spark') }
         }
       }
     } {
@@ -584,7 +601,7 @@ project(':spark2') {
   //
   // Tasks dependencies
   //
-  pack.dependsOn generateChangelog
+  //pack.dependsOn generateChangelog
   uploadArchives.dependsOn pack
   bintrayUpload.dependsOn pack
 
