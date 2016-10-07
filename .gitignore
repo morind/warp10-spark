@@ -12,3 +12,4 @@ out/
 .settings/
 .idea/
 gradle.properties
+changelog.*
