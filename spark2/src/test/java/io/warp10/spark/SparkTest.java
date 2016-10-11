@@ -25,16 +25,12 @@ public class SparkTest {
 
   @Test
   public void test() throws Exception {
+    System.setProperty("warp.timeunits", "us");
+    WarpConfig.setProperties((String) null);
     test(new SparkConf().setAppName("testapp").setMaster("local"));
   }
 
   public void test(SparkConf conf) throws Exception {
-
-    System.out.println(this.getClass().getClassLoader());
-
-    System.setProperty("warp.timeunits", "us");
-
-    WarpConfig.setProperties((String) null);
 
     JavaSparkContext sc = new JavaSparkContext(conf);
 
