@@ -11,7 +11,16 @@ import java.util.Iterator;
 import java.util.List;
 
 import com.google.common.base.Charsets;
+import io.warp10.continuum.gts.GTSDecoder;
+import io.warp10.continuum.gts.GTSHelper;
+import io.warp10.continuum.gts.GTSWrapperHelper;
+import io.warp10.continuum.store.thrift.data.GTSWrapper;
+import io.warp10.continuum.store.thrift.data.Metadata;
 import io.warp10.script.WarpScriptException;
+import org.apache.hadoop.io.BytesWritable;
+import org.apache.thrift.TDeserializer;
+import org.apache.thrift.TException;
+import org.apache.thrift.protocol.TCompactProtocol;
 import scala.Product;
 
 public class SparkUtils {
@@ -22,6 +31,8 @@ public class SparkUtils {
       return o;
     } else if (o instanceof byte[]) {
       return o;
+    } else if (o instanceof BytesWritable) {
+      return ((BytesWritable) o).getBytes();
     } else if (o instanceof BigInteger || o instanceof Long || o instanceof Integer || o instanceof Byte) {
       return ((Number) o).longValue();
     } else if (o instanceof BigDecimal || o instanceof Double || o instanceof Float) {
@@ -112,4 +123,50 @@ public class SparkUtils {
     return scriptSB.toString();
 
   }
+
+  /**
+   * Dump GTSWrapper (String representation of a GTSWrapper)
+   * @param wrapper
+   * @param optimize
+   * @result String representation of a GTSWrapper
+   */
+  public static String GTSDump(byte[] wrapper, boolean optimize) throws IOException {
+    TDeserializer deserializer = new TDeserializer(new TCompactProtocol.Factory());
+
+    GTSWrapper gtsWrapper = new GTSWrapper();
+
+    try {
+      deserializer.deserialize(gtsWrapper, (wrapper));
+    } catch (TException te) {
+      throw new IOException(te);
+    }
+
+    Metadata metadataChunk = new Metadata(gtsWrapper.getMetadata());
+
+    GTSDecoder decoder = GTSWrapperHelper.fromGTSWrapperToGTSDecoder(gtsWrapper);
+
+    //
+    // Metadata as String
+    //
+    StringBuilder metasb = new StringBuilder();
+    GTSHelper.metadataToString(metasb, metadataChunk.getName(), metadataChunk.getLabels());
+
+    StringBuilder sb = new StringBuilder();
+
+    boolean first = true;
+
+    while(decoder.next()) {
+      if (optimize && !first) {
+        sb.append("=");
+        sb.append(GTSHelper.tickToString(null, decoder.getTimestamp(), decoder.getLocation(), decoder.getElevation(), decoder.getValue()));
+      } else {
+        sb.append(GTSHelper.tickToString(metasb, decoder.getTimestamp(), decoder.getLocation(), decoder.getElevation(), decoder.getValue()));
+        first = false;
+      }
+      sb.append("\n");
+    }
+    return sb.toString();
+  }
+
+
 }
