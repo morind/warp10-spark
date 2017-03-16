@@ -5,10 +5,12 @@ import io.warp10.crypto.SipHashInline;
 import io.warp10.script.WarpScriptException;
 import io.warp10.script.WarpScriptExecutor;
 import io.warp10.script.WarpScriptExecutor.StackSemantics;
+import org.apache.spark.SparkFiles;
 
 import java.io.IOException;
 import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Paths;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -137,7 +139,24 @@ public abstract class WarpScriptAbstractFunction implements Serializable {
             // delete the @ character
             //
 
-            String filePath = code.substring(1);
+            String originalfilePath = code.substring(1);
+
+            //
+            // addFile has to be done on the local fs (on the Driver side) to propagate the file.
+            // Then we have to retrieve the real path with SparkFiles.get()
+            //
+
+            //
+            // Keep only the filename (filepath is related to the original FS)
+            // Target directory on each one is dynamic
+            //
+            String filename = Paths.get(originalfilePath).getFileName().toString();
+
+            //
+            // Compute (dynamic) filepath
+            //
+            String filePath = SparkFiles.get(filename);
+
             String mc2FileContent = "'" + filePath + "' '" + WARPSCRIPT_FILE_VARIABLE + "' STORE " + SparkUtils.parseScript(filePath);
 
             executor = new WarpScriptExecutor(this.semantics, mc2FileContent, null, null);

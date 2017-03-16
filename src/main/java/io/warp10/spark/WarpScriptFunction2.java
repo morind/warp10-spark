@@ -1,7 +1,6 @@
 package io.warp10.spark;
 
 import io.warp10.script.WarpScriptException;
-
 import io.warp10.spark.common.SparkUtils;
 import io.warp10.spark.common.WarpScriptAbstractFunction;
 import org.apache.spark.api.java.function.Function2;

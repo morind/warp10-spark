@@ -1,25 +1,24 @@
-package io.warp10.spark2;
+package io.warp10.spark;
 
 import io.warp10.script.WarpScriptException;
 import io.warp10.spark.common.SparkUtils;
 import io.warp10.spark.common.WarpScriptAbstractFunction;
-import org.apache.spark.api.java.function.Function2;
+import org.apache.spark.api.java.function.Function;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class WarpScriptFunction2<T1, T2, R> extends WarpScriptAbstractFunction implements Function2<T1, T2, R> {
+public class WarpScriptFunction<T, R> extends WarpScriptAbstractFunction implements Function<T, R> {
 
-  public WarpScriptFunction2(String code) throws WarpScriptException {
+  public WarpScriptFunction(String code) throws WarpScriptException {
     super(code);
   }
 
   @Override
-  public R call(T1 v1, T2 v2) throws Exception {
+  public R call(T v1) throws Exception {
     synchronized(this) {
       List<Object> stackInput = new ArrayList<Object>();
       stackInput.add(SparkUtils.fromSpark(v1));
-      stackInput.add(SparkUtils.fromSpark(v2));
       List<Object> stackResult = executor.exec(stackInput);
 
       return (R) SparkUtils.toSpark(stackResult);

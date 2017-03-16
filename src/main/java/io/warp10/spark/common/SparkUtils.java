@@ -1,9 +1,6 @@
 package io.warp10.spark.common;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -18,6 +15,7 @@ import io.warp10.continuum.store.thrift.data.GTSWrapper;
 import io.warp10.continuum.store.thrift.data.Metadata;
 import io.warp10.script.WarpScriptException;
 import org.apache.hadoop.io.BytesWritable;
+import org.apache.spark.SparkFiles;
 import org.apache.thrift.TDeserializer;
 import org.apache.thrift.TException;
 import org.apache.thrift.protocol.TCompactProtocol;
@@ -89,21 +87,21 @@ public class SparkUtils {
 
   /**
    * Parse Warpscript file and return its content as String
-   * @param warpscriptName name of the script to parse
+   * @param warpscriptFile name of the script to parse
    * @return String
    */
-  public static String parseScript(String warpscriptName)
+  public static String parseScript(String warpscriptFile)
       throws IOException, WarpScriptException {
 
     //
     // Load the Warpscript file
+    // Warning: provide target directory when file has been copied on each node
     //
     StringBuffer scriptSB = new StringBuffer();
     InputStream fis = null;
     BufferedReader br = null;
     try {
-
-      fis = SparkUtils.class.getClassLoader().getResourceAsStream(warpscriptName);
+      fis = new FileInputStream(warpscriptFile);
       br = new BufferedReader(new InputStreamReader(fis, Charsets.UTF_8));
 
       while (true) {
