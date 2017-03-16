@@ -1,8 +1,12 @@
 package io.warp10.spark;
 
 import io.warp10.script.WarpScriptException;
-
+import io.warp10.spark.common.SparkUtils;
+import io.warp10.spark.common.WarpScriptAbstractFunction;
 import org.apache.spark.api.java.function.FlatMapFunction;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class WarpScriptFlatMapFunction<T, R> extends WarpScriptAbstractFunction implements FlatMapFunction<T, R> {
 
@@ -13,11 +17,11 @@ public class WarpScriptFlatMapFunction<T, R> extends WarpScriptAbstractFunction 
   @Override
   public Iterable<R> call(T t) throws Exception {
     synchronized(this) {
-      getStack().push(SparkUtils.fromSpark(t));
-      getStack().exec(getMacro());
-      Object top = getStack().pop();
-        
-      return (Iterable<R>) SparkUtils.toSpark(top);      
+      List<Object> stackInput = new ArrayList<Object>();
+      stackInput.add(SparkUtils.fromSpark(t));
+      List<Object> stackResult = executor.exec(stackInput);
+
+      return (Iterable<R>) SparkUtils.toSpark(stackResult);
     }
   }
 }
