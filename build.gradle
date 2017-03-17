@@ -54,6 +54,10 @@ def getVersionName = { ->
     maven {
       url "https://repository.apache.org/service/local/repositories/releases/content"
     }
+    // For bigqueue
+    maven {
+      url "https://raw.github.com/bulldog2011/bulldog-repo/master/repo/releases/"
+    }
     maven {
       url 'https://dl.bintray.com/hbs/maven'
     }
@@ -77,12 +81,18 @@ def getVersionName = { ->
     //
     // WarpScript
     //
-    compile group: 'io.warp10', name: 'warpscript', version: '1.0.9'
+    compile group: 'io.warp10', name: 'warpscript', version: '1.2.5'
 
     //
     // Apache Spark
     //
     compile group: 'org.apache.spark', name: 'spark-core_2.11', version: '1.6.2'
+    compile group: 'org.apache.spark', name: 'spark-sql_2.11', version: '1.6.2'
+
+    //
+    // Cascading for SpillableTupleList
+    //
+    compile group: 'com.leansoft', name: 'bigqueue', version: '0.7.0'
 
     //UPLOAD ARTIFACTS THROUGH SSH
     deployerJars 'org.apache.maven.wagon:wagon-ssh-external:2.8'

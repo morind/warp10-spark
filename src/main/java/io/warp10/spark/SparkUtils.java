@@ -3,11 +3,14 @@ package io.warp10.spark;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.Arrays;
 import java.util.List;
 
+import org.apache.spark.sql.Row;
+
 import scala.Product;
-import scala.Tuple1;
+import scala.collection.Iterator;
+import scala.collection.Iterable;
 
 public class SparkUtils {
   public static Object fromSpark(Object o) {
@@ -38,8 +41,29 @@ public class SparkUtils {
         l.add(fromSpark(elt));
       }
       return l;
+    } else if (o instanceof Iterator || o instanceof Iterable) {
+      final Iterator<Object> siter = o instanceof Iterator ? (Iterator<Object>) o : ((Iterable<Object>) o).iterator();
+      return new java.util.Iterator<Object>() {
+        @Override
+        public boolean hasNext() {
+          return siter.hasNext();
+        }
+        @Override
+        public Object next() {
+          return siter.next();
+        }
+      };
+    } else if (o instanceof Row) {
+      List<Object> l = new ArrayList<Object>(((Row) o).size());      
+      Row row = (Row) o;
+
+      for (int i = 0; i < row.size(); i++) {
+        l.add(fromSpark(row.get(i)));
+      }
+      return l;
     } else {
-      throw new RuntimeException("Encountered yet unsupported type: " + o.getClass());
+      return o;
+      //throw new RuntimeException("Encountered yet unsupported type: " + o.getClass());
     }
   }
   
@@ -60,8 +84,11 @@ public class SparkUtils {
       }
       
       return l;
+    } else if (o instanceof Iterator) {
+      return null;
     } else {
-      throw new RuntimeException("Encountered yet unsupported type: " + o.getClass());
+      return o;
+      //throw new RuntimeException("Encountered yet unsupported type: " + o.getClass());
     }
   }
 
