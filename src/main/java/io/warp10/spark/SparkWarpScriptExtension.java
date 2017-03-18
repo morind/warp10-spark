@@ -19,7 +19,6 @@ public class SparkWarpScriptExtension extends WarpScriptExtension {
     functions.put(TOSPARK, new TOSPARK(TOSPARK));
     functions.put(SPARKTO, new SPARKTO(SPARKTO));
     functions.put(TOSPARKROW, new TOSPARKROW(TOSPARKROW));
-    functions.put("FOREACH2", new FOREACH("FOREACH2"));
     functions.put("PRINT", new PRINT("PRINT"));
   }
   
