@@ -15,7 +15,7 @@ public class SPARKTO extends NamedWarpScriptFunction implements WarpScriptStackF
   public Object apply(WarpScriptStack stack) throws WarpScriptException {
     Object top = stack.pop();
     
-    stack.push(SparkUtils.fromSpark(top));
+    stack.push(io.warp10.spark.common.SparkUtils.fromSpark(top));
     
     return stack;
   }  
