@@ -8,6 +8,8 @@ import io.warp10.script.WarpScriptStack.Macro;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.io.Serializable;
 import java.util.Properties;
 
@@ -61,14 +63,14 @@ public abstract class WarpScriptAbstractFunction implements Serializable {
   private void init(String code) throws WarpScriptException {
     
     if (code.startsWith("@")) {
-      FileReader reader = null;
+      Reader reader = null;
       BufferedReader br = null;
       StringBuilder sb = new StringBuilder();
       
       try {
-        reader = new FileReader(code.substring(1));
-        br = new BufferedReader(reader);
-        
+        reader = new InputStreamReader(WarpScriptAbstractFunction.class.getClassLoader().getResourceAsStream(code.substring(1)));
+        //reader = new FileReader(code.substring(1));
+        br = new BufferedReader(reader);        
         
         while(true) {
           String line = br.readLine();
@@ -110,5 +112,4 @@ public abstract class WarpScriptAbstractFunction implements Serializable {
   public WarpScriptStack.Macro getMacro() {
     return this.macro;
   }
-
 }
