@@ -1,7 +1,6 @@
 package io.warp10.spark;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 import io.warp10.WarpConfig;
 import io.warp10.hadoop.Warp10InputFormat;
@@ -10,6 +9,7 @@ import io.warp10.spark.common.WarpScriptAbstractFunction;
 import org.apache.hadoop.io.BytesWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.spark.SparkConf;
+import org.apache.spark.SparkContext;
 import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaSparkContext;
@@ -21,8 +21,10 @@ public class SparkTest {
     try {
       System.out.println("testWarp10Format");
       SparkTest sparkTest = new SparkTest();
-      SparkConf conf = new SparkConf().setAppName("testapp").setMaster(args[0]);
-      conf.set(WarpScriptAbstractFunction.WARPSCRIPT_FILE_VARIABLE, args[1]);
+      SparkConf conf = new SparkConf().setAppName("testapp");
+      //conf.set("inFile", args[0]);
+      //conf.set("outFile", args[1]);
+      //conf.set(WarpScriptAbstractFunction.WARPSCRIPT_FILE_VARIABLE, args[1]);
       sparkTest.testWarp10Format(conf);
     } catch (Exception e) {
       System.err.println(e.getMessage());
@@ -51,9 +53,7 @@ public class SparkTest {
     SparkConf conf = new SparkConf().setAppName("test").setMaster("local");
     conf.set(WarpScriptAbstractFunction.WARPSCRIPT_FILE_VARIABLE, "test.mc2");
     conf.setExecutorEnv("warp10.config","warp10.conf");
-
     testWarpScriptFile(conf);
-
   }
 
   @Test
@@ -64,12 +64,11 @@ public class SparkTest {
     conf.set("token", "XXXXXX");
 
     testWarp10InputFormat(conf);
-
   }
 
   public void test(SparkConf conf) throws Exception {
 
-    JavaSparkContext sc = new JavaSparkContext(conf);
+    JavaSparkContext sc = JavaSparkContext.fromSparkContext(SparkContext.getOrCreate(conf));
 
     List<String> list = new ArrayList<String>();
 
@@ -89,7 +88,7 @@ public class SparkTest {
 
   public void testWarp10InputFormat(SparkConf conf) throws Exception {
 
-    JavaSparkContext sc = new JavaSparkContext(conf);
+    JavaSparkContext sc = JavaSparkContext.fromSparkContext(SparkContext.getOrCreate(conf));
 
     sc.hadoopConfiguration().set("warp10.fetcher.protocol","http");
     sc.hadoopConfiguration().set("warp10.fetcher.fallbacks","localhost");
@@ -115,7 +114,7 @@ public class SparkTest {
     JavaPairRDD<Text, BytesWritable> inputRDD = sc.newAPIHadoopFile("test", Warp10InputFormat.class, Text.class, BytesWritable.class, sc.hadoopConfiguration());
 
     //JavaRDD<String> lines = inputRDD.values().map(new WarpScriptFunction<>("UNWRAP VALUES"));
-    JavaRDD<String> lines = inputRDD.values().map(value -> SparkUtils.GTSDump(value.getBytes(), true));
+    JavaRDD < String > lines = inputRDD.values().map(value -> SparkUtils.GTSDump(value.getBytes(), true));
 
     System.out.println(lines.collect());
 
@@ -123,7 +122,7 @@ public class SparkTest {
 
   public void testWarp10Format(SparkConf conf) throws Exception {
 
-    JavaSparkContext sc = new JavaSparkContext(conf);
+    JavaSparkContext sc = JavaSparkContext.fromSparkContext(SparkContext.getOrCreate(conf));
 
     System.out.println("testWarp10Format");
 
@@ -145,29 +144,22 @@ public class SparkTest {
     JavaRDD<String> lines = sc.parallelize(list);
 
     //lines = lines.keyBy(new WarpScriptFunction<>("0 1 SUBSTRING")).flatMap(new WarpScriptFlatMapFunction<> ("SNAPSHOT [ SWAP ] LIST-> DROP"));
+    //JavaRDD<byte[]> exec = lines.flatMap(new WarpScriptFlatMapFunction<>("PARSE WRAPRAW"));
 
-    JavaRDD<byte[]> exec = lines.flatMap(new WarpScriptFlatMapFunction<>("PARSE WRAPRAW"));
-
-    //JavaRDD<String> exec = lines.flatMap(new WarpScriptFlatMapFunction<>("PARSE [ SWAP 2.0 mapper.pow 0 0 0 ] MAP <% DROP TOSTRING %> LMAP"));
+    JavaRDD<String> exec = lines.flatMap(new WarpScriptFlatMapFunction<>("PARSE [ SWAP 2.0 mapper.pow 0 0 0 ] MAP <% DROP TOSTRING %> LMAP"));
     //JavaRDD<String> exec2 = exec.flatMap(new WarpScriptFlatMapFunction<>("UNWRAP [ SWAP [ '~.*' ] reducer.sum ] REDUCE <% DROP TOSTRING %> LMAP"));
-
     System.out.println(exec.collect());
 
   }
 
   public void testWarpScriptFile(SparkConf conf) throws Exception {
 
-    JavaSparkContext sc = new JavaSparkContext(conf);
-
+    JavaSparkContext sc = JavaSparkContext.fromSparkContext(SparkContext.getOrCreate(conf));
     String warpScriptFile = conf.get(WarpScriptAbstractFunction.WARPSCRIPT_FILE_VARIABLE);
-    sc.addFile(warpScriptFile);
-
-    sc.addFile("test.mc2");
 
     System.out.println("testWarpScriptFile");
 
     // Create input metrics
-
     List<String> list = new ArrayList<String>();
 
     list.add("1476886686000000// test.data{id=0} 10");
@@ -186,7 +178,6 @@ public class SparkTest {
     //
     // /var/tmp/test.mc2 content => PARSE WRAPRAW LIST-> DROP
     //
-
     JavaRDD<byte[]> exec = lines.flatMap(new WarpScriptFlatMapFunction<>("@" + warpScriptFile));
     JavaRDD<String> result = exec.map(val -> SparkUtils.GTSDump(val, true));
 
