@@ -26,11 +26,11 @@ public class PySparkCaller {
       LOG.info("Dump params");
       kv.forEach((k, v) -> {
         LOG.info(k + " -> " + v);
-        if ("master".equals(k)) {
+        if ("spark.master".equals(k)) {
           conf.setMaster(v);
-        } else if ("appName".equals(k)) {
+        } else if ("spark.app.name".equals(k)) {
           conf.setAppName(v);
-        } else if ("warp.timeunits".equals(k)) {
+        } else if (Configuration.WARP_TIME_UNITS.equals(k)) {
           System.setProperty(Configuration.WARP_TIME_UNITS, v);
         } else {
           conf.set(k, v);
