@@ -274,7 +274,7 @@ bintray {
     licenses = ['Apache-2.0']
     vcsUrl = 'https://github.com/cityzendata/warp10-spark.git'
     version {
-      name = getVersionName()
+      name = getVersionName('')
       released = new Date()
       vcsTag = version
     }
