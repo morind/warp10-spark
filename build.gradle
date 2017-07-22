@@ -43,6 +43,16 @@ group = 'io.warp10'
 archivesBaseName = 'warp10-spark'
 version = getVersionName('')
 
+//
+// Constants
+//
+
+// List of dependencies required by warp10-spark
+ext.requiredLibs = [ 'warpscript', 'libthrift', 'bcprov-jdk16', 'boon', 'commons-io', 'commons-codec', 'commons-lang', 'commons-lang3', 'commons-math3', 'compiler', 'core', 'curator-x-discovery', 'geoxplib', 'guava', \
+     'hadoop-common', 'hadoop-mapreduce-client-core', 'java-merge-sort', 'jetty-servlets', 'joda-time', 'jruby-complete', 'jtransforms', 'jts', 'junit', 'jython', 'kafka_2.11', \
+     'luaj-jse', 'oss-client', 'renjin-script-engine', 'sensision', 'slf4j-api', 'trove4j' ]
+
+
 ext {
   stagingUser = project.hasProperty('stagingUser') ? project.property('stagingUser') : System.getenv('STAGING_USER')
   stagingURL = project.hasProperty('stagingURL') ? project.property('stagingURL') : System.getenv('STAGING_URL')
@@ -195,17 +205,18 @@ task pack(type: Jar, dependsOn: jar) {
     attributes("Implementation-Version": version)
   }
 
+  ext.listDeps = []
+
+  configurations.compile.resolvedConfiguration.resolvedArtifacts.each {
+    if (isDepRequired(it.moduleVersion.id.name)) {
+      listDeps << it.file
+    }
+  }
+
+  from files(sourceSets.main.output.classesDir)
   from {
-    configurations.compile.collect {
-      it.isDirectory() ? it : zipTree(it).matching {
-        exclude { it.toString().contains('servlet-api') }
-        exclude { it.toString().contains('jmh') }
-        exclude { it.toString().contains('junit') }
-        exclude { it.toString().contains('parquet') }
-        exclude { it.toString().contains('org.apache.hadoop') }
-        exclude { it.toString().contains('org.apache.spark') }
-        exclude { it.toString().contains('org.scala') }
-      }
+    listDeps.collect {
+      it.isDirectory() ? it : zipTree(it)
     }
   } {
     exclude 'META-INF/*.DSA'
