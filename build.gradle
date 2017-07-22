@@ -191,7 +191,7 @@ task pack(type: Jar, dependsOn: jar) {
   zip64 = true
 
   manifest {
-    attributes("Implementation-Title": "spark")
+    attributes("Implementation-Title": "warp10-spark")
     attributes("Implementation-Version": version)
   }
 
@@ -250,7 +250,7 @@ uploadArchives {
 
 publishing {
   publications {
-    spark(MavenPublication) {
+    warp10Spark(MavenPublication) {
       groupId 'io.warp10'
       artifactId archivesBaseName
       version version
@@ -265,13 +265,13 @@ bintray {
   user = project.hasProperty('bintrayUser') ? project.property('bintrayUser') : System.getenv('BINTRAY_USER')
   key = project.hasProperty('bintrayApiKey') ? project.property('bintrayApiKey') : System.getenv('BINTRAY_API_KEY')
 
-  publications = ['spark']
+  publications = ['warp10Spark']
 
   pkg {
     repo = 'maven'
-    name = 'spark'
+    name = 'warp10-spark'
     licenses = ['Apache-2.0']
-    vcsUrl = 'https://github.com/cityzendata/spark.git'
+    vcsUrl = 'https://github.com/cityzendata/warp10-spark.git'
     version {
       name = version
       released = new Date()
