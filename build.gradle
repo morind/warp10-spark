@@ -251,6 +251,7 @@ uploadArchives {
 publishing {
   publications {
     warp10Spark(MavenPublication) {
+      artifact pack
       groupId 'io.warp10'
       artifactId archivesBaseName
       version version
@@ -273,7 +274,7 @@ bintray {
     licenses = ['Apache-2.0']
     vcsUrl = 'https://github.com/cityzendata/warp10-spark.git'
     version {
-      name = version
+      name = getVersionName()
       released = new Date()
       vcsTag = version
     }
