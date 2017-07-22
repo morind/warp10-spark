@@ -48,7 +48,7 @@ version = getVersionName('')
 //
 
 // List of dependencies required by warp10-spark
-ext.requiredLibs = [ 'warpscript', 'libthrift', 'bcprov-jdk16', 'boon', 'commons-io', 'commons-codec', 'commons-lang', 'commons-lang3', 'commons-math3', 'compiler', 'core', 'curator-x-discovery', 'geoxplib', 'guava', \
+ext.requiredLibs = [ 'warpscript', 'spark-core_2.11', 'spark-sql_2.11', 'libthrift', 'bcprov-jdk16', 'boon', 'commons-io', 'commons-codec', 'commons-lang', 'commons-lang3', 'commons-math3', 'compiler', 'core', 'curator-x-discovery', 'geoxplib', 'guava', \
      'hadoop-common', 'hadoop-mapreduce-client-core', 'java-merge-sort', 'jetty-servlets', 'joda-time', 'jruby-complete', 'jtransforms', 'jts', 'junit', 'jython', 'kafka_2.11', \
      'luaj-jse', 'oss-client', 'renjin-script-engine', 'sensision', 'slf4j-api', 'trove4j' ]
 
