@@ -3,6 +3,7 @@ package io.warp10.spark;
 import java.util.*;
 
 import io.warp10.WarpConfig;
+import io.warp10.continuum.Configuration;
 import io.warp10.hadoop.Warp10InputFormat;
 import io.warp10.spark.common.SparkUtils;
 import io.warp10.spark.common.WarpScriptAbstractFunction;
@@ -33,7 +34,7 @@ public class SparkTest {
 
   @Test
   public void test() throws Exception {
-    System.setProperty("warp.timeunits", "us");
+    System.setProperty(Configuration.WARP_TIME_UNITS, "us");
     WarpConfig.setProperties((String) null);
     test(new SparkConf().setAppName("test").setMaster("local"));
   }
