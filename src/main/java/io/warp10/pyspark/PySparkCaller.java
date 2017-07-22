@@ -1,5 +1,7 @@
 package io.warp10.pyspark;
 
+import io.warp10.continuum.Configuration;
+import io.warp10.script.WarpScriptStack;
 import org.apache.spark.SparkConf;
 import org.apache.spark.SparkContext;
 import org.apache.spark.api.java.JavaSparkContext;
@@ -28,6 +30,8 @@ public class PySparkCaller {
           conf.setMaster(v);
         } else if ("appName".equals(k)) {
           conf.setAppName(v);
+        } else if ("warp.timeunits".equals(k)) {
+          System.setProperty(Configuration.WARP_TIME_UNITS, v);
         } else {
           conf.set(k, v);
         }
