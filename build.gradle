@@ -243,6 +243,11 @@ shadowJar {
   relocate('io', 'io.warp10.spark.io') {
     exclude "io.warp10.**"
   }
+
+  relocate('org', 'io.warp10.spark.org') {
+    exclude "org.apache.spark.**"
+  }
+
   relocate 'com', 'io.warp10.spark.com'
   relocate 'edu', 'io.warp10.spark.edu'
   relocate 'gnu', 'io.warp10.spark.gnu'
@@ -255,9 +260,7 @@ shadowJar {
   relocate 'junit', 'io.warp10.spark.junit'
   relocate 'kafka', 'io.warp10.spark.kafka'
   relocate 'net', 'io.warp10.spark.net'
-  relocate 'org', 'io.warp10.spark.org'
   relocate 'processing', 'io.warp10.spark.processing'
-  relocate 'scala', 'io.warp10.spark.scala'
 
   classifier = null
 }
