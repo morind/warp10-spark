@@ -240,14 +240,24 @@ shadowJar {
     attributes("Implementation-Version": version)
   }
 
-  relocate("", "io.warp10.spark.") {
+  relocate('io', 'io.warp10.spark.io') {
     exclude "io.warp10.**"
-    exclude "**properties"
-    exclude "**txt"
-    exclude "changelog**"
-    exclude "**xml"
-    exclude "**/META-INF/**"
   }
+  relocate 'com', 'io.warp10.spark.com'
+  relocate 'edu', 'io.warp10.spark.edu'
+  relocate 'gnu', 'io.warp10.spark.gnu'
+  relocate 'icon', 'io.warp10.spark.icon'
+  relocate 'javax', 'io.warp10.spark.javax'
+  relocate 'jline', 'io.warp10.spark.jline'
+  relocate 'jni', 'io.warp10.spark.jni'
+  relocate 'jnr', 'io.warp10.spark.jnr'
+  relocate 'jruby', 'io.warp10.spark.jnr'
+  relocate 'junit', 'io.warp10.spark.junit'
+  relocate 'kafka', 'io.warp10.spark.kafka'
+  relocate 'net', 'io.warp10.spark.net'
+  relocate 'org', 'io.warp10.spark.org'
+  relocate 'processing', 'io.warp10.spark.processing'
+  relocate 'scala', 'io.warp10.spark.scala'
 
   classifier = null
 }
