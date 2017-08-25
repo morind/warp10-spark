@@ -249,16 +249,32 @@ shadowJar {
     exclude "**/META-INF/**"
   }
 
-  relocate('org.codehaus', 'io.warp10.spark.org') {
+  relocate('org.codehaus', 'io.warp10.spark.org.codehaus') {
   }
 
-  //relocate('com', 'io.warp10.spark.com') {
-  //  exclude "**properties"
-  //  exclude "**txt"
-  //  exclude "changelog**"
-  //  exclude "**xml"
-  //  exclude "**/META-INF/**"
-  //}
+  relocate('com.google', 'io.warp10.spark.com.google') {
+    exclude "**properties"
+    exclude "**txt"
+    exclude "changelog**"
+    exclude "**xml"
+    exclude "**/META-INF/**"
+  }
+
+  relocate('com.etsy', 'io.warp10.spark.com.etsy') {
+    exclude "**properties"
+    exclude "**txt"
+    exclude "changelog**"
+    exclude "**xml"
+    exclude "**/META-INF/**"
+  }
+
+  relocate('com.fasterxml', 'io.warp10.spark.com.fasterxml') {
+    exclude "**properties"
+    exclude "**txt"
+    exclude "changelog**"
+    exclude "**xml"
+    exclude "**/META-INF/**"
+  }
 
   relocate('edu', 'io.warp10.spark.edu') {
     exclude "**properties"
