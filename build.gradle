@@ -558,6 +558,6 @@ def addChildsToWarp10SparkDeps (def pResolvedDependency) {
 //
 //pack.dependsOn generateChangelog
 shadowJar.dependsOn pack
-uploadArchives.dependsOn shadowJar
-bintrayUpload.dependsOn shadowJar
+uploadArchives.dependsOn jar
+bintrayUpload.dependsOn jar
 
