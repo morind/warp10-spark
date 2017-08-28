@@ -44,6 +44,12 @@ group = 'io.warp10'
 archivesBaseName = 'warp10-spark'
 version = getVersionName('')
 
+// List of dependencies
+ext.depsList = []
+
+// List of unique dependency names (index)
+ext.depsIndex = [] as Set
+
 //
 // Constants
 //
@@ -352,13 +358,20 @@ uploadArchives {
   }
 }
 
+model {
+  tasks.generatePomFileForWarp10SparkPublication {
+    destination = file("$buildDir/generated-pom.xml")
+  }
+}
+
 publishing {
   publications {
     warp10Spark(MavenPublication) {
-      artifact shadowJar
+      artifact jar
       groupId 'io.warp10'
       artifactId archivesBaseName
       version version
+      genPom(pom)
     }
   }
 }
@@ -500,6 +513,44 @@ def isGitRepoSynced() {
 
 def boolean isDepRequired(String currentDep ) {
   return requiredLibs.any { currentDep.equalsIgnoreCase(it) }
+}
+
+//
+// Generate custom pom for Warp10-Spark with the minimal dependencies
+//
+def genPom(Object pom) {
+  pom.withXml {
+    // compute the list of dependencies
+    configurations.compile.resolvedConfiguration.firstLevelModuleDependencies.each {
+      directDep ->
+        addChildsToWarp10SparkDeps(directDep)
+    }
+
+    def dependenciesNode = asNode().appendNode('dependencies')
+    depsList.each {
+      def dependencyNode = dependenciesNode.appendNode('dependency')
+      dependencyNode.appendNode('groupId', it.getModuleGroup())
+      dependencyNode.appendNode('artifactId', it.getModuleName())
+      dependencyNode.appendNode('version', it.getModuleVersion())
+    }
+  }
+}
+
+//
+// Add the root dependency and all its children (transitive dependencies) to the list
+//
+def addChildsToWarp10SparkDeps (def pResolvedDependency) {
+
+  pResolvedDependency.children.each {
+    addChildsToWarp10SparkDeps(it)
+  }
+
+  // Add the dependency and its children if it has not been seen before and if this dependency is required
+  def depName = pResolvedDependency.getModuleName()
+  if(!depsIndex.contains(depName) && isDepRequired(depName)) {
+    depsIndex << depName
+    depsList << pResolvedDependency
+  }
 }
 
 //
