@@ -93,7 +93,7 @@ public class SparkTest {
 
     sc.hadoopConfiguration().set("warp10.fetcher.protocol","http");
     sc.hadoopConfiguration().set("warp10.fetcher.fallbacks","localhost");
-    sc.hadoopConfiguration().set("http.header.now","X-CityzenData-Now");
+    sc.hadoopConfiguration().set("http.header.now","X-Warp10-Now");
     sc.hadoopConfiguration().set("http.header.timespan","X-Warp10-Timespan");
     sc.hadoopConfiguration().set("warp10.fetcher.port","8881");
     sc.hadoopConfiguration().set("warp10.fetcher.path","/api/v0/sfetch");
@@ -103,7 +103,7 @@ public class SparkTest {
     sc.hadoopConfiguration().set("warp10.http.read.timeout","10000");
     sc.hadoopConfiguration().set("warp10.max.splits","10");
 
-    sc.hadoopConfiguration().set("warp10.fetcher.fallbacksonly", "true");
+    //sc.hadoopConfiguration().set("warp10.fetcher.fallbacksonly", "true");
 
     sc.hadoopConfiguration().set("warp10.splits.token", conf.get("token"));
     sc.hadoopConfiguration().set("warp10.splits.selector", "~.*{}");
@@ -114,8 +114,8 @@ public class SparkTest {
 
     JavaPairRDD<Text, BytesWritable> inputRDD = sc.newAPIHadoopFile("test", Warp10InputFormat.class, Text.class, BytesWritable.class, sc.hadoopConfiguration());
 
-    //JavaRDD<String> lines = inputRDD.values().map(new WarpScriptFunction<>("UNWRAP VALUES"));
-    JavaRDD < String > lines = inputRDD.values().map(value -> SparkUtils.GTSDump(value.getBytes(), true));
+    JavaRDD<String> lines = inputRDD.values().map(new WarpScriptFunction<>("UNWRAP TOSTRING"));
+    //JavaRDD < String > lines = inputRDD.values().map(value -> SparkUtils.GTSDump(value.getBytes(), true));
 
     System.out.println(lines.collect());
 
