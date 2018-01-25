@@ -92,18 +92,19 @@ public class SparkTest {
     JavaSparkContext sc = JavaSparkContext.fromSparkContext(SparkContext.getOrCreate(conf));
 
     sc.hadoopConfiguration().set("warp10.fetcher.protocol","http");
-    sc.hadoopConfiguration().set("warp10.fetcher.fallbacks","localhost");
+    sc.hadoopConfiguration().set("warp10.fetcher.fallbacks","{ Egress endpoints as fallbacks }");
     sc.hadoopConfiguration().set("http.header.now","X-Warp10-Now");
     sc.hadoopConfiguration().set("http.header.timespan","X-Warp10-Timespan");
     sc.hadoopConfiguration().set("warp10.fetcher.port","8881");
     sc.hadoopConfiguration().set("warp10.fetcher.path","/api/v0/sfetch");
-    sc.hadoopConfiguration().set("warp10.splits.endpoint","https://warp.cityzendata.net/api/v0/splits");
+    sc.hadoopConfiguration().set("warp10.splits.endpoint","http://{ Egress endpoint }:8881/api/v0/splits");
     sc.hadoopConfiguration().set("warp10.fetch.timespan","-10");
     sc.hadoopConfiguration().set("warp10.http.connect.timeout","10000");
     sc.hadoopConfiguration().set("warp10.http.read.timeout","10000");
     sc.hadoopConfiguration().set("warp10.max.splits","10");
 
-    //sc.hadoopConfiguration().set("warp10.fetcher.fallbacksonly", "true");
+    // True if you do not have Fetcher and want to use Egress as Fetcher
+    sc.hadoopConfiguration().set("warp10.fetcher.fallbacksonly", "true");
 
     sc.hadoopConfiguration().set("warp10.splits.token", conf.get("token"));
     sc.hadoopConfiguration().set("warp10.splits.selector", "~.*{}");
